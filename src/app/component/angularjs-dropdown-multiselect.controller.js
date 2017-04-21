@@ -50,6 +50,7 @@ export default function dropdownMultiselectController(
 		onDeselectAll: angular.noop,
 		onInitDone: angular.noop,
 		onMaxSelectionReached: angular.noop,
+		onSearchNotFound: angular.noop,
 		onSelectionChanged: angular.noop,
 		onClose: angular.noop,
 	};
@@ -465,6 +466,7 @@ export default function dropdownMultiselectController(
 			} else if ($scope.settings.enableSearch) {
 				$scope.selectAll();
 			}
+			$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
 		}
 	}
 
