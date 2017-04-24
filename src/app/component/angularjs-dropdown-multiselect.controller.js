@@ -60,6 +60,7 @@ export default function dropdownMultiselectController(
 		scrollable: false,
 		scrollableHeight: '300px',
 		closeOnBlur: true,
+		closeOnTab: false,
 		displayProp: 'label',
 		enableSearch: false,
 		clearSearchOnClose: false,
@@ -428,10 +429,17 @@ export default function dropdownMultiselectController(
 		if (!$scope.settings.keyboardControls) {
 			return;
 		}
-		if (event.keyCode === 9 || event.keyCode === 40) { // tab
+		if (event.keyCode === 9) { // tab
+			event.preventDefault();
+			if ($scope.settings.closeOnTab) {
+				$scope.toggleDropdown();
+			} else {
+				focusFirstOption();
+			}
+		} else if (event.keyCode === 40) { // down
 			event.preventDefault();
 			focusFirstOption();
-		} else if (event.keyCode === 38) {
+		} else if (event.keyCode === 38) { // up
 			event.preventDefault();
 			if (parent.previousElementSibling) {
 				nextOption = parent.previousElementSibling.querySelector('a') || parent.previousElementSibling.querySelector('input');
@@ -445,7 +453,7 @@ export default function dropdownMultiselectController(
 			if (nextOption) {
 				nextOption.focus();
 			}
-		} else if (event.keyCode === 27) {
+		} else if (event.keyCode === 27) { // esc
 			event.preventDefault();
 
 			$scope.toggleDropdown();
