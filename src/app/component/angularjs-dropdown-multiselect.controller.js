@@ -68,6 +68,7 @@ export default function dropdownMultiselectController(
 		showCheckAll: true,
 		showUncheckAll: true,
 		showEnableSearchButton: false,
+		seperateSelectedItem: false,
 		closeOnSelect: false,
 		buttonClasses: 'btn btn-default',
 		closeOnDeselect: false,
@@ -156,6 +157,12 @@ export default function dropdownMultiselectController(
 	});
 
 	$scope.externalEvents.onInitDone();
+	if (settings.seperateSelectedItem) {
+		$scope.$watch('[selectedModel, options]', () => {
+			$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v));
+			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v));
+		}, true);
+	}
 
 	function focusFirstOption() {
 		setTimeout(() => {
