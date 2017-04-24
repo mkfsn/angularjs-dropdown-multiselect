@@ -236,7 +236,7 @@ export default function dropdownMultiselectController(
 				const paddingWidth = 12 * 2;
 				const borderWidth = 1 * 2;
 				const dropdownIconWidth = 8;
-				const widthLimit = $element[0].offsetWidth - paddingWidth - borderWidth - dropdownIconWidth;
+				const widthLimit = $element.find('button.dropdown-toggle')[0].offsetWidth - paddingWidth - borderWidth - dropdownIconWidth;
 
 				let itemsText = [];
 
