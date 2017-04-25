@@ -128,7 +128,7 @@
     <li ng-if="settings.seperateSelectedItem && settings.selectedLabel && selectedItem.length > 0 && customFilteredItem.length <= 0"
         role="presentation"
         class="dropdown-header">
-      {{ settings.selectedLabel }}
+      {{ settings.selectedLabel }} {{ tryShowAmount(selectedItem) }}
     </li>
     <li ng-if="!settings.groupBy && settings.seperateSelectedItem && customFilteredItem.length <= 0"
         class="selected"
@@ -164,7 +164,7 @@
     <li ng-if="settings.customFilterLabel && settings.customFilter && customFilteredItem.length > 0"
         role="presentation"
         class="dropdown-header">
-      {{ settings.customFilterLabel }}
+      {{ settings.customFilterLabel }} {{ tryShowAmount(customFilteredItem) }}
     </li>
     <li ng-if="settings.customFilter && customFilteredItem.length > 0"
         class="custom-filtered"
@@ -181,7 +181,7 @@
     <li ng-if="settings.seperateSelectedItem && settings.unSelectedLabel && unSelectedItem.length > 0 && customFilteredItem.length <= 0"
         role="presentation"
         class="dropdown-header">
-      {{ settings.unSelectedLabel }}
+      {{ settings.unSelectedLabel }} {{ tryShowAmount(unSelectedItem | filter:getFilter(input.searchFilter)) }}
     </li>
     <li ng-if="!settings.groupBy && settings.seperateSelectedItem && customFilteredItem.length <= 0"
         class="unSelected"

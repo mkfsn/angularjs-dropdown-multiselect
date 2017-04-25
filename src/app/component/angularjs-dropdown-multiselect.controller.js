@@ -66,6 +66,7 @@ export default function dropdownMultiselectController(
 		enableSearch: false,
 		clearSearchOnClose: false,
 		selectionLimit: 0,
+		showAmount: false,
 		showCheckAll: true,
 		showUncheckAll: true,
 		showEnableSearchButton: false,
@@ -157,6 +158,7 @@ export default function dropdownMultiselectController(
 		toggleSearch,
 		keyDownToggleSearch,
 		tryCustomFilter,
+		tryShowAmount,
 		orderFunction,
 	});
 	$scope.customFilteredItem = [];
@@ -530,6 +532,13 @@ export default function dropdownMultiselectController(
 		if ($scope.settings.customFilter !== null) {
 			$scope.customFilteredItem = $scope.settings.customFilter($scope.input.searchFilter, $scope.options);
 		}
+	}
+
+	function tryShowAmount(items) {
+		if ($scope.settings.showAmount) {
+			return `(${items.length})`;
+		}
+		return '';
 	}
 
 	function orderFunction(object1, object2) {
