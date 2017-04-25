@@ -57,6 +57,7 @@ export default function dropdownMultiselectController(
 
 	const settings = {
 		dynamicTitle: true,
+		dynamicSearchBox: false,
 		scrollable: false,
 		scrollableHeight: '300px',
 		closeOnBlur: true,

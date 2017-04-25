@@ -3,12 +3,20 @@
      <div ng-transclude="toggleDropdown">
       <button ng-disabled="disabled"
               type="button"
+              ng-if="!settings.dynamicSearchBox || !open"
               class="dropdown-toggle"
               style="display:inline-block; width:calc(100% - 2rem)"
               ng-class="settings.buttonClasses"
               ng-click="toggleDropdown()">
         {{getButtonText()}}&nbsp;<span class="caret"></span>
       </button>
+      <input type="text"
+             class="form-control searchField"
+             ng-if="settings.dynamicSearchBox && open"
+             ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter);"
+             ng-model="input.searchFilter"
+             style="display:inline-block; width:calc(100% - 2rem)"
+             placeholder="{{texts.searchPlaceholder}}" />
       <a ng-keydown="keyDownLink($event)"
          data-ng-click="deselectAll();"
          tabindex="-1"
@@ -19,6 +27,7 @@
     </div>
   <ul class="dropdown-menu dropdown-menu-form"
       ng-if="open"
+      style="width: 100%"
       ng-style="{display: open ? 'block' : 'none', height : settings.scrollable ? settings.scrollableHeight : 'auto', overflow: 'auto' }">
     <li ng-if="settings.showCheckAll && settings.selectionLimit === 0">
       <a ng-keydown="keyDownLink($event)"
@@ -51,24 +60,24 @@
     <li ng-if="settings.selectByGroups && settings.showEnableSearchButton"
         class="divider">
     </li>
-    <li ng-if="settings.showEnableSearchButton && settings.enableSearch">
+    <li ng-if="settings.showEnableSearchButton && settings.enableSearch && !settings.dynamicSearchBox">
       <a ng-keydown="keyDownLink($event); keyDownToggleSearch();"
          ng-click="toggleSearch($event);"
          tabindex="-1">
         {{texts.disableSearch}}
       </a>
     </li>
-    <li ng-if="settings.showEnableSearchButton && !settings.enableSearch">
+    <li ng-if="settings.showEnableSearchButton && !settings.enableSearch && !settings.dynamicSearchBox">
       <a ng-keydown="keyDownLink($event); keyDownToggleSearch();"
          ng-click="toggleSearch($event);"
          tabindex="-1">
         {{texts.enableSearch}}
       </a>
     </li>
-    <li ng-if="(settings.showCheckAll && settings.selectionLimit > 0) || settings.showUncheckAll || settings.showEnableSearchButton"
+    <li ng-if="(settings.showCheckAll && settings.selectionLimit > 0) || settings.showUncheckAll || settings.showEnableSearchButton && !settings.dynamicSearchBox"
         class="divider">
     </li>
-    <li ng-if="settings.enableSearch">
+    <li ng-if="settings.enableSearch && !settings.dynamicSearchBox">
       <div class="dropdown-header">
         <input type="text"
                class="form-control searchField"
@@ -78,7 +87,7 @@
                placeholder="{{texts.searchPlaceholder}}" />
       </div>
     </li>
-    <li ng-if="settings.enableSearch"
+    <li ng-if="settings.enableSearch && !settings.dynamicSearchBox"
         class="divider">
     </li>
     <li ng-if="settings.groupBy"
