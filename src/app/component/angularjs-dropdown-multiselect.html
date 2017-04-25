@@ -132,7 +132,7 @@
         <a ng-keydown="option.disabled || keyDownLink($event)"
            role="menuitem"
            style="display: inline-block; float: right; cursor: pointer"
-           ng-click="option.disabled || setSelectedItem(option, false, true)"
+           ng-click="option.disabled || setSelectedItem(option, false, true); $event.stopPropagation()"
            ng-disabled="option.disabled">
           <div ng-if="settings.checkBoxes"
                class="checkbox">
@@ -161,30 +161,28 @@
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
         ng-repeat="option in unSelectedItem | filter:getFilter(input.searchFilter) | orderBy:'':false:orderFunction">
-      <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
+      <a ng-keydown="option.disabled || keyDownLink($event)"
+         role="menuitem"
+         class="option"
+         tabindex="-1"
+         ng-click="option.disabled || setSelectedItem(option, false, true); $event.stopPropagation()"
+         ng-disabled="option.disabled">
+        <div ng-if="settings.checkBoxes"
+             class="checkbox">
+          <label>
+            <input class="checkboxInput"
+                   type="checkbox"
+                   ng-click="checkboxClick($event, option)"
+                   ng-checked="isChecked(option)" />
+            <span dm-dropdown-static-include="{{settings.template}}"></span>
+          </label>
+        </div>
         <span ng-if="!settings.checkBoxes"
-              style="display: inline-block"
+              data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
+        </span>
+        <span ng-if="!settings.checkBoxes"
               dm-dropdown-static-include="{{settings.template}}"></span>
-        <a ng-keydown="option.disabled || keyDownLink($event)"
-           role="menuitem"
-           style="display: inline-block; float: right; cursor: pointer"
-           ng-click="option.disabled || setSelectedItem(option, false, true)"
-           ng-disabled="option.disabled">
-          <div ng-if="settings.checkBoxes"
-               class="checkbox">
-            <label>
-              <input class="checkboxInput"
-                     type="checkbox"
-                     ng-click="checkboxClick($event, option)"
-                     ng-checked="isChecked(option)" />
-              <span dm-dropdown-static-include="{{settings.template}}"></span>
-            </label>
-          </div>
-          <span ng-if="!settings.checkBoxes"
-                data-ng-class="{'glyphicon glyphicon-remove': isChecked(option)}">
-          </span>
-        </a>
-      </div>
+      </a>
     </li>
     <!-- Default -->
     <li ng-if="!settings.groupBy && !settings.seperateSelectedItem"
