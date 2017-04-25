@@ -13,7 +13,8 @@
       <input type="text"
              class="form-control searchField"
              ng-if="settings.dynamicSearchBox && open"
-             ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter);"
+             ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter)"
+             ng-change="tryCustomFilter()"
              ng-model="input.searchFilter"
              style="display:inline-block; width:calc(100% - 2rem)"
              placeholder="{{texts.searchPlaceholder}}" />
@@ -124,19 +125,19 @@
       </a>
     </li>
     <!-- Selected Item -->
-    <li ng-if="settings.seperateSelectedItem && settings.selectedLabel && selectedItem.length > 0"
+    <li ng-if="settings.seperateSelectedItem && settings.selectedLabel && selectedItem.length > 0 && customFilteredItem.length <= 0"
         role="presentation"
         class="dropdown-header">
       {{ settings.selectedLabel }}
     </li>
-    <li ng-if="!settings.groupBy && settings.seperateSelectedItem"
+    <li ng-if="!settings.groupBy && settings.seperateSelectedItem && customFilteredItem.length <= 0"
         class="selected"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
         ng-repeat="option in selectedItem | orderBy:'':false:orderFunction">
       <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
         <span ng-if="!settings.checkBoxes"
-              style="display: inline-block"
+              style="display: inline-block; width: calc(100% - 20px)"
               dm-dropdown-static-include="{{settings.template}}"></span>
         <a ng-keydown="option.disabled || keyDownLink($event)"
            role="menuitem"
@@ -159,13 +160,30 @@
         </a>
       </div>
     </li>
+    <!-- Custom-Filtered Item -->
+    <li ng-if="settings.customFilterLabel && settings.customFilter && customFilteredItem.length > 0"
+        role="presentation"
+        class="dropdown-header">
+      {{ settings.customFilterLabel }}
+    </li>
+    <li ng-if="settings.customFilter && customFilteredItem.length > 0"
+        class="custom-filtered"
+        ng-class="{'active': isChecked(option) && settings.styleActive}"
+        role="presentation"
+        ng-repeat="option in customFilteredItem | orderBy:'':false:orderFunction">
+      <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
+        <span ng-if="!settings.checkBoxes"
+              style="display: inline-block; width: 100%"
+              dm-dropdown-static-include="{{settings.template}}"></span>
+      </div>
+    </li>
     <!-- Not-Selected Item -->
-    <li ng-if="settings.seperateSelectedItem && settings.unSelectedLabel && unSelectedItem.length > 0"
+    <li ng-if="settings.seperateSelectedItem && settings.unSelectedLabel && unSelectedItem.length > 0 && customFilteredItem.length <= 0"
         role="presentation"
         class="dropdown-header">
       {{ settings.unSelectedLabel }}
     </li>
-    <li ng-if="!settings.groupBy && settings.seperateSelectedItem"
+    <li ng-if="!settings.groupBy && settings.seperateSelectedItem && customFilteredItem.length <= 0"
         class="unSelected"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"

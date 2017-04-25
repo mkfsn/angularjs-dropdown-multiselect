@@ -78,6 +78,7 @@ export default function dropdownMultiselectController(
 		groupByTextProvider: null,
 		smartButtonMaxItems: 0,
 		smartButtonTextConverter: angular.noop,
+		customFilter: null,
 		styleActive: false,
 		selectedToTop: false,
 		keyboardControls: false,
@@ -94,6 +95,7 @@ export default function dropdownMultiselectController(
 		searchPlaceholder: 'Search...',
 		buttonDefaultText: 'Select',
 		dynamicButtonTextSuffix: 'checked',
+		customFilterLabel: null,
 		disableSearch: 'Disable search',
 		enableSearch: 'Enable search',
 		selectGroup: 'Select all:',
@@ -154,8 +156,10 @@ export default function dropdownMultiselectController(
 		getFilter,
 		toggleSearch,
 		keyDownToggleSearch,
+		tryCustomFilter,
 		orderFunction,
 	});
+	$scope.customFilteredItem = [];
 
 	$scope.externalEvents.onInitDone();
 	if (settings.seperateSelectedItem) {
@@ -206,6 +210,7 @@ export default function dropdownMultiselectController(
 	function close() {
 		$scope.open = false;
 		$scope.input.searchFilter = $scope.settings.clearSearchOnClose ? '' : $scope.input.searchFilter;
+		$scope.customFilteredItem = [];
 		$scope.externalEvents.onClose();
 	}
 
@@ -483,6 +488,7 @@ export default function dropdownMultiselectController(
 				$scope.selectAll();
 			}
 			$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
+			$scope.customFilteredItem = [];
 		}
 	}
 
@@ -517,6 +523,12 @@ export default function dropdownMultiselectController(
 			} else {
 				focusFirstOption();
 			}
+		}
+	}
+
+	function tryCustomFilter() {
+		if ($scope.settings.customFilter !== null) {
+			$scope.customFilteredItem = $scope.settings.customFilter($scope.input.searchFilter, $scope.options);
 		}
 	}
 
