@@ -62,6 +62,8 @@ export default function dropdownMultiselectController(
 		scrollableHeight: '300px',
 		closeOnBlur: true,
 		closeOnTab: false,
+		showNotFound: false,
+		enterSelectAll: true,
 		displayProp: 'label',
 		enableSearch: false,
 		clearSearchOnClose: false,
@@ -100,6 +102,7 @@ export default function dropdownMultiselectController(
 		disableSearch: 'Disable search',
 		enableSearch: 'Enable search',
 		selectGroup: 'Select all:',
+		searchNotFoundText: 'No Result',
 		allSelectedText: 'All',
 	};
 
@@ -486,7 +489,7 @@ export default function dropdownMultiselectController(
 				if (searchResult.length === 1) {
 					$scope.setSelectedItem(searchResult[0], false, true);
 				}
-			} else if ($scope.settings.enableSearch) {
+			} else if ($scope.settings.enableSearch && $scope.settings.enterSelectAll) {
 				$scope.selectAll();
 			}
 			$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);

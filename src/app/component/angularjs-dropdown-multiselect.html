@@ -239,6 +239,15 @@
               dm-dropdown-static-include="{{settings.template}}"></span>
       </a>
     </li>
+    <!-- Result Not Found -->
+    <li ng-if="settings.showNotFound && (unSelectedItem | filter:getFilter(input.searchFilter)).length === 0"
+        ng-class="{'active': isChecked(option) && settings.styleActive}"
+        role="presentation">
+      <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
+        <span style="display: inline-block; width: 100%"
+              dm-dropdown-static-include="{{texts.searchNotFoundText}}"></span>
+      </div>
+    </li>
     <li class="divider"
         ng-show="settings.selectionLimit > 1">
     </li>
