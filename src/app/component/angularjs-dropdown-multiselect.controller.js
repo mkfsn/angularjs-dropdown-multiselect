@@ -52,6 +52,7 @@ export default function dropdownMultiselectController(
 		onMaxSelectionReached: angular.noop,
 		onSearchNotFound: angular.noop,
 		onSelectionChanged: angular.noop,
+		onOptionUpdate: angular.noop,
 		onClose: angular.noop,
 	};
 
@@ -108,6 +109,7 @@ export default function dropdownMultiselectController(
 
 	const input = {
 		searchFilter: $scope.searchFilter || '',
+		editText: $scope.editText || '',
 	};
 
 	angular.extend(settings, $scope.extraSettings || []);
@@ -157,12 +159,16 @@ export default function dropdownMultiselectController(
 		keyDownLink,
 		keyDownSearchDefault,
 		keyDownSearch,
+		keyDownEdit,
+		finishEdit,
 		getFilter,
+		handleSearchNotFound,
 		toggleSearch,
 		keyDownToggleSearch,
 		tryCustomFilter,
 		tryShowAmount,
 		orderFunction,
+		enterEditMode,
 	});
 	$scope.customFilteredItem = [];
 
@@ -237,25 +243,9 @@ export default function dropdownMultiselectController(
 		return groupValue;
 	}
 
-	function textWidth(text) {
-		const $btn = $element.find('button');
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
-		ctx.font = $btn.css('font-size') + $btn.css('font-family');
-		// http://stackoverflow.com/questions/38823353/chrome-canvas-2d-context-measuretext-giving-me-weird-results
-		ctx.originalFont = $btn.css('font-size') + $btn.css('font-family');
-		ctx.fillStyle = '#000000';
-		return ctx.measureText(text).width;
-	}
-
 	function getButtonText() {
 		if ($scope.settings.dynamicTitle && $scope.selectedModel && $scope.selectedModel.length > 0) {
 			if ($scope.settings.smartButtonMaxItems > 0) {
-				const paddingWidth = 12 * 2;
-				const borderWidth = 1 * 2;
-				const dropdownIconWidth = 8;
-				const widthLimit = $element.find('button.dropdown-toggle')[0].offsetWidth - paddingWidth - borderWidth - dropdownIconWidth;
-
 				let itemsText = [];
 
 				angular.forEach($scope.options, (optionItem) => {
@@ -272,25 +262,7 @@ export default function dropdownMultiselectController(
 					itemsText.push('...');
 				}
 
-				let result = itemsText.join(', ');
-				let index = result.length - 4;
-				if ($element[0].offsetWidth === 0) {
-					return result;
-				}
-				if (widthLimit <= textWidth('...')) {
-					return '...';
-				}
-				while (textWidth(result) > widthLimit) {
-					if (itemsText[itemsText.length - 1] !== '...') {
-						itemsText.push('...');
-						result = `${result}...`;
-						index = result.length - 4;
-					}
-					result = result.slice(0, index) + result.slice(index + 1);
-					index -= 1;
-				}
-
-				return result;
+				return itemsText.join(', ');
 			}
 			const totalSelected = angular.isDefined($scope.selectedModel) ? $scope.selectedModel.length : 0;
 
@@ -492,9 +464,25 @@ export default function dropdownMultiselectController(
 			} else if ($scope.settings.enableSearch && $scope.settings.enterSelectAll) {
 				$scope.selectAll();
 			}
-			$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
+			$scope.handleSearchNotFound();
 			$scope.customFilteredItem = [];
 		}
+	}
+
+	function keyDownEdit(event, editText) {
+		if (event.keyCode === 13) {
+			$scope.finishEdit(event, editText);
+		}
+	}
+
+	function finishEdit(event, editText) {
+		$scope.externalEvents.onOptionUpdate($scope.editModel, editText);
+		$scope.editModel = undefined;
+		$scope.close();
+	}
+
+	function handleSearchNotFound() {
+		$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
 	}
 
 	function getFilter(searchFilter) {
@@ -577,5 +565,16 @@ export default function dropdownMultiselectController(
 			return -1;
 		}
 		return 1;
+	}
+
+	function enterEditMode(option) {
+		if (!option.editable) {
+			return;
+		}
+		$scope.input.searchFilter = option.name;
+		$scope.editModel = option;
+		setTimeout(() => {
+			angular.element($element)[0].querySelector('.editField').focus();
+		}, 0);
 	}
 }

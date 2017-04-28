@@ -4,20 +4,33 @@
       <button ng-disabled="disabled"
               type="button"
               ng-if="!settings.dynamicSearchBox || !open"
+              ng-show="!settings.dynamicSearchBox || !open"
               class="dropdown-toggle"
               style="display:inline-block; width:calc(100% - 2rem)"
               ng-class="settings.buttonClasses"
               ng-click="toggleDropdown()">
-        {{getButtonText()}}&nbsp;<span class="caret"></span>
+        <span class="text">{{getButtonText()}}</span>
+        <span class="caret"></span>
       </button>
       <input type="text"
              class="form-control searchField"
-             ng-if="settings.dynamicSearchBox && open"
+             ng-if="settings.dynamicSearchBox && open && !editModel"
+             ng-show="settings.dynamicSearchBox && open"
              ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter)"
              ng-change="tryCustomFilter()"
              ng-model="input.searchFilter"
              style="display:inline-block; width:calc(100% - 2rem)"
              placeholder="{{texts.searchPlaceholder}}" />
+      <input type="text"
+             class="form-control editField"
+             ng-if="settings.dynamicSearchBox && open && editModel"
+             ng-keydown="keyDownEdit($event, input.searchFilter)"
+             ng-change="tryCustomFilter()"
+             ng-model="input.searchFilter"
+             ng-blur="finishEdit($event, input.searchFilter)"
+             ng-show="settings.dynamicSearchBox && open"
+             ng-model="input.searchFilter"
+             style="display:inline-block; width:calc(100% - 2rem)">
       <a ng-keydown="keyDownLink($event)"
          data-ng-click="deselectAll();"
          tabindex="-1"
@@ -28,7 +41,7 @@
     </div>
   <ul class="dropdown-menu dropdown-menu-form"
       ng-if="open"
-      style="width: 100%"
+      style="width: calc(100% - 22px); margin-top: 0"
       ng-style="{display: open ? 'block' : 'none', height : settings.scrollable ? settings.scrollableHeight : 'auto', overflow: 'auto' }">
     <li ng-if="settings.showCheckAll && settings.selectionLimit === 0">
       <a ng-keydown="keyDownLink($event)"
@@ -134,11 +147,15 @@
         class="selected"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
-        ng-repeat="option in selectedItem | orderBy:'':false:orderFunction">
+        ng-repeat="option in selectedItem">
       <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
-        <span ng-if="!settings.checkBoxes"
-              style="display: inline-block; width: calc(100% - 20px)"
-              dm-dropdown-static-include="{{settings.template}}"></span>
+        <a role="menuitem"
+           ng-click="enterEditMode(option)"
+           style="display: inline-block; width: calc(100% - 20px); cursor: pointer">
+          <span ng-if="!settings.checkBoxes"
+                style="display: block; width: 100%"
+                dm-dropdown-static-include="{{settings.template}}"></span>
+        </a>
         <a ng-keydown="option.disabled || keyDownLink($event)"
            role="menuitem"
            style="display: inline-block; float: right; cursor: pointer"
@@ -187,7 +204,7 @@
         class="unSelected"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
-        ng-repeat="option in unSelectedItem | filter:getFilter(input.searchFilter) | orderBy:'':false:orderFunction">
+        ng-repeat="option in unSelectedItem | filter:getFilter(input.searchFilter)">
       <a ng-keydown="option.disabled || keyDownLink($event)"
          role="menuitem"
          class="option"
@@ -240,13 +257,15 @@
       </a>
     </li>
     <!-- Result Not Found -->
-    <li ng-if="settings.showNotFound && (unSelectedItem | filter:getFilter(input.searchFilter)).length === 0"
-        ng-class="{'active': isChecked(option) && settings.styleActive}"
+    <li ng-if="settings.showNotFound && (customFilteredItem.length === 0 && (unSelectedItem | filter:getFilter(input.searchFilter)).length === 0)"
         role="presentation">
-      <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
-        <span style="display: inline-block; width: 100%"
-              dm-dropdown-static-include="{{texts.searchNotFoundText}}"></span>
-      </div>
+      <a role="menuitem"
+         class="option"
+         tabindex="-1"
+         style="cursor: pointer"
+         ng-click="handleSearchNotFound()">
+        <span dm-dropdown-static-include="{{texts.searchNotFoundText}}"></span>
+      </a>
     </li>
     <li class="divider"
         ng-show="settings.selectionLimit > 1">
