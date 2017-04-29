@@ -176,7 +176,7 @@ export default function dropdownMultiselectController(
 	if (settings.seperateSelectedItem) {
 		$scope.$watch('[selectedModel, options]', () => {
 			$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v));
-			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v));
+			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable);
 		}, true);
 	}
 
