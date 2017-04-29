@@ -13,8 +13,7 @@
       </button>
       <input type="text"
              class="form-control searchField"
-             ng-if="settings.dynamicSearchBox && open && !editModel"
-             ng-show="settings.dynamicSearchBox && open"
+             ng-show="settings.dynamicSearchBox && open && !editModel"
              ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter)"
              ng-change="tryCustomFilter()"
              ng-model="input.searchFilter"
@@ -22,12 +21,11 @@
              placeholder="{{texts.searchPlaceholder}}" />
       <input type="text"
              class="form-control editField"
-             ng-if="settings.dynamicSearchBox && open && editModel"
+             ng-show="settings.dynamicSearchBox && open && editModel"
              ng-keydown="keyDownEdit($event, input.searchFilter)"
              ng-change="tryCustomFilter()"
              ng-model="input.searchFilter"
              ng-blur="finishEdit($event, input.searchFilter)"
-             ng-show="settings.dynamicSearchBox && open"
              ng-model="input.searchFilter"
              style="display:inline-block; width:calc(100% - 2rem)">
       <a ng-keydown="keyDownLink($event)"
