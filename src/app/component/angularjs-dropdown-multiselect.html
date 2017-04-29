@@ -3,7 +3,6 @@
      <div ng-transclude="toggleDropdown">
       <button ng-disabled="disabled"
               type="button"
-              ng-if="!settings.dynamicSearchBox || !open"
               ng-show="!settings.dynamicSearchBox || !open"
               class="dropdown-toggle"
               style="display:inline-block; width:calc(100% - 2rem)"
@@ -187,11 +186,14 @@
         class="custom-filtered"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
-        ng-repeat="option in customFilteredItem | orderBy:'':false:orderFunction">
+        ng-repeat="option in customFilteredItem | orderBy:'toString()'">
       <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
-        <span ng-if="!settings.checkBoxes"
+        <span ng-if="!settings.checkBoxes && !settings.customHTML"
               style="display: inline-block; width: 100%"
               dm-dropdown-static-include="{{settings.template}}"></span>
+        <span ng-if="settings.customHTML"
+              style="display: inline-block; width: 100%"
+              ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
       </div>
     </li>
     <!-- Not-Selected Item -->
@@ -204,7 +206,7 @@
         class="unSelected"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
-        ng-repeat="option in unSelectedItem | filter:getFilter(input.searchFilter)">
+        ng-repeat="option in unSelectedItem | filter:getFilter(input.searchFilter) | orderBy:'toString()'">
       <a ng-keydown="option.disabled || keyDownLink($event)"
          role="menuitem"
          class="option"
@@ -224,8 +226,11 @@
         <span ng-if="!settings.checkBoxes"
               data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
         </span>
-        <span ng-if="!settings.checkBoxes"
+        <span ng-if="!settings.checkBoxes && !settings.customHTML"
               dm-dropdown-static-include="{{settings.template}}"></span>
+        <span ng-if="settings.customHTML"
+              style="display: inline-block; width: 100%"
+              ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
       </a>
     </li>
     <!-- Default -->

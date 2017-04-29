@@ -82,6 +82,7 @@ export default function dropdownMultiselectController(
 		groupByTextProvider: null,
 		smartButtonMaxItems: 0,
 		smartButtonTextConverter: angular.noop,
+		customHTML: angular.noop,
 		customFilter: null,
 		styleActive: false,
 		selectedToTop: false,
@@ -139,6 +140,10 @@ export default function dropdownMultiselectController(
 			}
 		});
 	}
+
+	$scope.$on('$destroy', () => {
+		$document.off('click');
+	});
 
 	angular.extend($scope, {
 		toggleDropdown,
