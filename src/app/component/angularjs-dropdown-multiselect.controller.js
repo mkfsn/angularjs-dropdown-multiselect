@@ -64,6 +64,7 @@ export default function dropdownMultiselectController(
 		closeOnBlur: true,
 		closeOnTab: false,
 		showNotFound: false,
+		forceFocusSearchField: false,
 		enterSelectAll: true,
 		displayProp: 'label',
 		enableSearch: false,
@@ -194,16 +195,40 @@ export default function dropdownMultiselectController(
 		}, 0);
 	}
 
+	function focusSearchField() {
+		setTimeout(() => {
+			const elementToFocus = angular.element($element)[0].querySelector('.searchField');
+			if (angular.isDefined(elementToFocus) && elementToFocus != null) {
+				if ($scope.settings.dynamicSearchBox && $scope.open && !$scope.editModel) {
+					elementToFocus.classList.remove('ng-hide');
+				}
+				elementToFocus.focus();
+			}
+		}, 0);
+	}
+
+	function focusEditField() {
+		setTimeout(() => {
+			const elementToFocus = angular.element($element)[0].querySelector('.editField');
+			if (angular.isDefined(elementToFocus) && elementToFocus != null) {
+				if ($scope.settings.dynamicSearchBox && $scope.open && $scope.editModel) {
+					elementToFocus.classList.remove('ng-hide');
+				}
+				elementToFocus.focus();
+			}
+		}, 0);
+	}
+
 	function toggleDropdown() {
 		if ($scope.open) {
 			$scope.close();
 		} else { $scope.open = true; }
 		if ($scope.settings.keyboardControls) {
 			if ($scope.open) {
-				if ($scope.settings.selectionLimit === 1 && $scope.settings.enableSearch) {
-					setTimeout(() => {
-						angular.element($element)[0].querySelector('.searchField').focus();
-					}, 0);
+				if ($scope.settings.forceFocusSearchField) {
+					focusSearchField();
+				} else if ($scope.settings.selectionLimit === 1 && $scope.settings.enableSearch) {
+					focusSearchField();
 				} else {
 					focusFirstOption();
 				}
@@ -211,9 +236,7 @@ export default function dropdownMultiselectController(
 		}
 		if ($scope.settings.enableSearch) {
 			if ($scope.open) {
-				setTimeout(() => {
-					angular.element($element)[0].querySelector('.searchField').focus();
-				}, 0);
+				focusSearchField();
 			}
 		}
 	}
@@ -358,6 +381,10 @@ export default function dropdownMultiselectController(
 			$scope.externalEvents.onSelectionChanged();
 		}
 		$scope.selectedGroup = null;
+
+		if (!$scope.settings.closeOnSelect && $scope.settings.forceFocusSearchField) {
+			focusSearchField();
+		}
 	}
 
 	function isChecked(option) {
@@ -428,6 +455,8 @@ export default function dropdownMultiselectController(
 			event.preventDefault();
 			if ($scope.settings.closeOnTab) {
 				$scope.toggleDropdown();
+				const tabindex = parseInt($element.find('button.dropdown-toggle').attr('tabindex'), 10);
+				angular.element(`[tabindex=${tabindex + 1}]`).focus();
 			} else {
 				focusFirstOption();
 			}
@@ -488,6 +517,7 @@ export default function dropdownMultiselectController(
 
 	function handleSearchNotFound() {
 		$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
+		$scope.close();
 	}
 
 	function getFilter(searchFilter) {
@@ -513,11 +543,7 @@ export default function dropdownMultiselectController(
 		if (event.keyCode === 13) {
 			$scope.toggleSearch();
 			if ($scope.settings.enableSearch) {
-				setTimeout(
-					() => {
-						angular.element($element)[0].querySelector('.searchField').focus();
-					}, 0,
-				);
+				focusSearchField();
 			} else {
 				focusFirstOption();
 			}
@@ -573,13 +599,8 @@ export default function dropdownMultiselectController(
 	}
 
 	function enterEditMode(option) {
-		if (!option.editable) {
-			return;
-		}
 		$scope.input.searchFilter = option.name;
 		$scope.editModel = option;
-		setTimeout(() => {
-			angular.element($element)[0].querySelector('.editField').focus();
-		}, 0);
+		focusEditField();
 	}
 }

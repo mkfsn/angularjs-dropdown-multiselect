@@ -8,6 +8,7 @@ export default function dropdownMultiselectDirective() {
 			options: '=',
 			extraSettings: '=',
 			events: '=',
+			index: '=',
 			searchFilter: '=?',
 			translationTexts: '=',
 			disabled: '=',

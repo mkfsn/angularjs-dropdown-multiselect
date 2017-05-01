@@ -5,6 +5,7 @@
               type="button"
               ng-show="!settings.dynamicSearchBox || !open"
               class="dropdown-toggle"
+              tabindex="{{ 700 + index }}"
               style="display:inline-block; width:calc(100% - 2rem)"
               ng-class="settings.buttonClasses"
               ng-click="toggleDropdown()">
@@ -16,6 +17,7 @@
              ng-show="settings.dynamicSearchBox && open && !editModel"
              ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter)"
              ng-change="tryCustomFilter()"
+             tabindex="-1"
              ng-model="input.searchFilter"
              style="display:inline-block; width:calc(100% - 2rem)"
              placeholder="{{texts.searchPlaceholder}}" />
@@ -24,13 +26,14 @@
              ng-show="settings.dynamicSearchBox && open && editModel"
              ng-keydown="keyDownEdit($event, input.searchFilter)"
              ng-change="tryCustomFilter()"
+             tabindex="-1"
              ng-model="input.searchFilter"
              ng-blur="finishEdit($event, input.searchFilter)"
              ng-model="input.searchFilter"
              style="display:inline-block; width:calc(100% - 2rem)">
       <a ng-keydown="keyDownLink($event)"
          data-ng-click="deselectAll();"
-         tabindex="-1"
+         abindex="-1"
          style="display:inline-block; cursor:pointer"
          id="deselectAll">
         <span class="glyphicon glyphicon-remove"></span>
@@ -87,16 +90,6 @@
     </li>
     <li ng-if="(settings.showCheckAll && settings.selectionLimit > 0) || settings.showUncheckAll || settings.showEnableSearchButton && !settings.dynamicSearchBox"
         class="divider">
-    </li>
-    <li ng-if="settings.enableSearch && !settings.dynamicSearchBox">
-      <div class="dropdown-header">
-        <input type="text"
-               class="form-control searchField"
-               ng-keydown="keyDownSearchDefault($event); keyDownSearch($event, input.searchFilter);"
-               ng-style="{width: '100%'}"
-               ng-model="input.searchFilter"
-               placeholder="{{texts.searchPlaceholder}}" />
-      </div>
     </li>
     <li ng-if="settings.enableSearch && !settings.dynamicSearchBox"
         class="divider">
@@ -211,16 +204,6 @@
          tabindex="-1"
          ng-click="option.disabled || setSelectedItem(option, false, true); $event.stopPropagation()"
          ng-disabled="option.disabled">
-        <div ng-if="settings.checkBoxes"
-             class="checkbox">
-          <label>
-            <input class="checkboxInput"
-                   type="checkbox"
-                   ng-click="checkboxClick($event, option)"
-                   ng-checked="isChecked(option)" />
-            <span dm-dropdown-static-include="{{settings.template}}"></span>
-          </label>
-        </div>
         <span ng-if="!settings.checkBoxes"
               data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
         </span>
@@ -266,7 +249,7 @@
          class="option"
          tabindex="-1"
          style="cursor: pointer"
-         ng-click="handleSearchNotFound()">
+         ng-click="handleSearchNotFound(); focusSearchField()">
         <span dm-dropdown-static-include="{{texts.searchNotFoundText}}"></span>
       </a>
     </li>
