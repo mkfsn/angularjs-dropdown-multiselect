@@ -10,6 +10,11 @@
 	]
 */
 
+const Mode = {
+	normal: 1,
+	edit: 2,
+};
+
 function contains(collection, target) {
 	let containsTarget = false;
 	collection.some((object) => {
@@ -41,6 +46,8 @@ export default function dropdownMultiselectController(
 		$document,
 ) {
 	'ngInject';
+
+	$scope.mode = Mode.normal;
 
 	const $dropdownTrigger = $element.children()[0];
 	const externalEvents = {
@@ -120,6 +127,7 @@ export default function dropdownMultiselectController(
 
 	if (settings.closeOnBlur) {
 		$document.on('click', (e) => {
+			$scope.mode = Mode.normal;
 			if ($scope.open) {
 				let target = e.target.parentElement;
 				let parentFound = false;
@@ -165,10 +173,9 @@ export default function dropdownMultiselectController(
 		keyDownLink,
 		keyDownSearchDefault,
 		keyDownSearch,
-		keyDownEdit,
 		finishEdit,
+		isEditMode,
 		getFilter,
-		handleSearchNotFound,
 		toggleSearch,
 		keyDownToggleSearch,
 		tryCustomFilter,
@@ -181,9 +188,18 @@ export default function dropdownMultiselectController(
 	$scope.externalEvents.onInitDone();
 	if (settings.seperateSelectedItem) {
 		$scope.$watch('[selectedModel, options]', () => {
-			$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v));
-			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable);
+			updateSelection();
 		}, true);
+	}
+
+	function updateSelection() {
+		$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v));
+		if ($scope.mode === Mode.normal) {
+			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable);
+		} else {
+			$scope.unSelectedItem = $filter('filter')($scope.options, $scope.getFilter($scope.input.searchFilter))
+				.filter(v => !$scope.isChecked(v) && !v.editable);
+		}
 	}
 
 	function focusFirstOption() {
@@ -200,18 +216,6 @@ export default function dropdownMultiselectController(
 			const elementToFocus = angular.element($element)[0].querySelector('.searchField');
 			if (angular.isDefined(elementToFocus) && elementToFocus != null) {
 				if ($scope.settings.dynamicSearchBox && $scope.open && !$scope.editModel) {
-					elementToFocus.classList.remove('ng-hide');
-				}
-				elementToFocus.focus();
-			}
-		}, 0);
-	}
-
-	function focusEditField() {
-		setTimeout(() => {
-			const elementToFocus = angular.element($element)[0].querySelector('.editField');
-			if (angular.isDefined(elementToFocus) && elementToFocus != null) {
-				if ($scope.settings.dynamicSearchBox && $scope.open && $scope.editModel) {
 					elementToFocus.classList.remove('ng-hide');
 				}
 				elementToFocus.focus();
@@ -236,6 +240,7 @@ export default function dropdownMultiselectController(
 		}
 		if ($scope.settings.enableSearch) {
 			if ($scope.open) {
+				updateSelection();
 				focusSearchField();
 			}
 		}
@@ -349,6 +354,9 @@ export default function dropdownMultiselectController(
 			exists = $scope.selectedModel.indexOf(option) !== -1;
 			indexOfOption = $scope.selectedModel.indexOf(option);
 		}
+
+		$scope.mode = Mode.normal;
+		$scope.input.searchFilter = exists ? '' : option.name;
 
 		if (!dontRemove && exists) {
 			$scope.selectedModel.splice(indexOfOption, 1);
@@ -498,25 +506,18 @@ export default function dropdownMultiselectController(
 			} else if ($scope.settings.enableSearch && $scope.settings.enterSelectAll) {
 				$scope.selectAll();
 			}
-			$scope.handleSearchNotFound();
+			$scope.finishEdit();
 			$scope.customFilteredItem = [];
 		}
 	}
 
-	function keyDownEdit(event, editText) {
-		if (event.keyCode === 13) {
-			$scope.finishEdit(event, editText);
+	function finishEdit() {
+		if ($scope.mode !== Mode.edit) {
+			return;
 		}
-	}
-
-	function finishEdit(event, editText) {
-		$scope.externalEvents.onOptionUpdate($scope.editModel, editText);
+		$scope.externalEvents.onOptionUpdate($scope.editModel, $scope.input.searchFilter);
+		$scope.mode = Mode.normal;
 		$scope.editModel = undefined;
-		$scope.close();
-	}
-
-	function handleSearchNotFound() {
-		$scope.externalEvents.onSearchNotFound($scope.input.searchFilter);
 		$scope.close();
 	}
 
@@ -551,9 +552,16 @@ export default function dropdownMultiselectController(
 	}
 
 	function tryCustomFilter() {
+		$scope.mode = Mode.edit;
 		if ($scope.settings.customFilter !== null) {
+			$scope.unSelectedItem = $filter('filter')($scope.options, $scope.getFilter($scope.input.searchFilter))
+				.filter(v => !$scope.isChecked(v) && !v.editable);
 			$scope.customFilteredItem = $scope.settings.customFilter($scope.input.searchFilter, $scope.options);
 		}
+	}
+
+	function isEditMode() {
+		return $scope.mode === Mode.edit;
 	}
 
 	function tryShowAmount(items) {
@@ -600,7 +608,11 @@ export default function dropdownMultiselectController(
 
 	function enterEditMode(option) {
 		$scope.input.searchFilter = option.name;
-		$scope.editModel = option;
-		focusEditField();
+		if (option.editable) {
+			$scope.editModel = option;
+		} else {
+			$scope.editModel = undefined;
+		}
+		focusSearchField();
 	}
 }
