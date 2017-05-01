@@ -356,6 +356,7 @@ export default function dropdownMultiselectController(
 		}
 
 		$scope.mode = Mode.normal;
+		$scope.editModel = exists ? undefined : option;
 		$scope.input.searchFilter = exists ? '' : option.name;
 
 		if (!dontRemove && exists) {
@@ -608,11 +609,7 @@ export default function dropdownMultiselectController(
 
 	function enterEditMode(option) {
 		$scope.input.searchFilter = option.name;
-		if (option.editable) {
-			$scope.editModel = option;
-		} else {
-			$scope.editModel = undefined;
-		}
+		$scope.editModel = option;
 		focusSearchField();
 	}
 }
