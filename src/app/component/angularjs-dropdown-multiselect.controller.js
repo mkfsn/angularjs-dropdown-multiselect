@@ -195,10 +195,10 @@ export default function dropdownMultiselectController(
 	function updateSelection() {
 		$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v) && v.visible);
 		if ($scope.mode === Mode.normal) {
-			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable);
+			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable && v.visible);
 		} else {
 			$scope.unSelectedItem = $filter('filter')($scope.options, $scope.getFilter($scope.input.searchFilter))
-				.filter(v => !$scope.isChecked(v) && !v.editable);
+				.filter(v => !$scope.isChecked(v) && !v.editable && v.visible);
 		}
 	}
 
@@ -555,7 +555,7 @@ export default function dropdownMultiselectController(
 		$scope.mode = Mode.edit;
 		if ($scope.settings.customFilter !== null) {
 			$scope.unSelectedItem = $filter('filter')($scope.options, $scope.getFilter($scope.input.searchFilter))
-				.filter(v => !$scope.isChecked(v) && !v.editable);
+				.filter(v => !$scope.isChecked(v) && !v.editable && v.visible);
 			$scope.customFilteredItem = $scope.settings.customFilter($scope.input.searchFilter, $scope.options);
 		}
 	}
