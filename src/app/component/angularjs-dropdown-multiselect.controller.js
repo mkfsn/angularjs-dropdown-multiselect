@@ -166,6 +166,7 @@ export default function dropdownMultiselectController(
 		getGroupLabel,
 		getButtonText,
 		getPropertyForObject,
+		handleSearchNotFound,
 		selectAll,
 		deselectAll,
 		setSelectedItem,
@@ -221,6 +222,13 @@ export default function dropdownMultiselectController(
 				elementToFocus.focus();
 			}
 		}, 0);
+	}
+
+	function handleSearchNotFound() {
+		$scope.editModel = undefined;
+		$scope.externalEvents.onOptionUpdate($scope.editModel, $scope.input.searchFilter);
+		$scope.mode = Mode.normal;
+		$scope.close();
 	}
 
 	function toggleDropdown() {
