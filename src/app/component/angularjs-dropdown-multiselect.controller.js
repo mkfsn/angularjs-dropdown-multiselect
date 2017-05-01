@@ -193,7 +193,7 @@ export default function dropdownMultiselectController(
 	}
 
 	function updateSelection() {
-		$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v));
+		$scope.selectedItem = $scope.options.filter(v => $scope.isChecked(v) && v.visible);
 		if ($scope.mode === Mode.normal) {
 			$scope.unSelectedItem = $scope.options.filter(v => !$scope.isChecked(v) && !v.editable);
 		} else {
