@@ -126,13 +126,13 @@
       </a>
     </li>
     <!-- Result Not Found -->
-    <li ng-show="settings.showNotFound && (customFilteredItem.length === 0 && (unSelectedItem | filter:getFilter(input.searchFilter)).length === 0)"
+    <li ng-show="settings.showNotFound && customFilteredItem.length === 0 && unSelectedItem.length === 0 && !inSelection()"
         role="presentation">
       <a role="menuitem"
          class="option"
          tabindex="-1"
          style="cursor: pointer"
-         ng-click="handleSearchNotFound(); focusSearchField()">
+         ng-click="handleSearchNotFound()">
         <span dm-dropdown-static-include="{{texts.searchNotFoundText}}"></span>
       </a>
     </li>

@@ -171,6 +171,7 @@ export default function dropdownMultiselectController(
 		deselectAll,
 		setSelectedItem,
 		isChecked,
+		inSelection,
 		keyDownLink,
 		keyDownSearchDefault,
 		keyDownSearch,
@@ -229,6 +230,11 @@ export default function dropdownMultiselectController(
 		$scope.externalEvents.onOptionUpdate($scope.editModel, $scope.input.searchFilter);
 		$scope.mode = Mode.normal;
 		$scope.close();
+	}
+
+	function inSelection() {
+		const text = $scope.input.searchFilter;
+		return $scope.selectedItem.find(item => item.name === text) !== undefined;
 	}
 
 	function toggleDropdown() {
