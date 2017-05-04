@@ -34,7 +34,7 @@
       style="margin-top: 0"
       ng-style="{display: open ? 'block' : 'none', height : settings.scrollable ? settings.scrollableHeight : 'auto', overflow: 'auto' }">
     <!-- Selected Item -->
-    <li ng-show="!isEditMode() && selectedItem.length > 0 && customFilteredItem.length <= 0"
+    <li ng-if="!isEditMode() && selectedItem.length > 0 && customFilteredItem.length <= 0"
         role="presentation"
         class="dropdown-header">
       {{ settings.selectedLabel }} {{ tryShowAmount(selectedItem) }}
@@ -61,7 +61,7 @@
       </div>
     </li>
     <!-- Custom-Filtered Item -->
-    <li ng-show="settings.customFilterLabel && settings.customFilter && customFilteredItem.length > 0"
+    <li ng-if="settings.customFilterLabel && settings.customFilter && customFilteredItem.length > 0"
         role="presentation" class="dropdown-header">
       {{ settings.customFilterLabel }} {{ tryShowAmount(customFilteredItem) }}
     </li>
@@ -77,7 +77,7 @@
     </li>
     <!-- Not-Selected Item -->
     <li role="presentation"
-        ng-show="customFilteredItem.length === 0"
+        ng-if="customFilteredItem.length === 0"
         class="dropdown-header">
       {{ settings.unSelectedLabel }} {{ tryShowAmount(unSelectedItem) }}
     </li>
