@@ -125,33 +125,35 @@ export default function dropdownMultiselectController(
 	angular.extend(externalEvents, $scope.events || []);
 	angular.extend(texts, $scope.translationTexts);
 
-	if (settings.closeOnBlur) {
-		$document.on('click', (e) => {
-			$scope.mode = Mode.normal;
-			if ($scope.open) {
-				let target = e.target.parentElement;
-				let parentFound = false;
+	function closeOnBlurFn(e) {
+		$scope.mode = Mode.normal;
+		if ($scope.open) {
+			let target = e.target.parentElement;
+			let parentFound = false;
 
-				while (angular.isDefined(target) && target !== null && !parentFound) {
-					if (!!target.className.split && contains(target.className.split(' '), 'multiselect-parent') && !parentFound) {
-						if (target === $dropdownTrigger) {
-							parentFound = true;
-						}
+			while (angular.isDefined(target) && target !== null && !parentFound) {
+				if (!!target.className.split && contains(target.className.split(' '), 'multiselect-parent') && !parentFound) {
+					if (target === $dropdownTrigger) {
+						parentFound = true;
 					}
-					target = target.parentElement;
 				}
-
-				if (!parentFound) {
-					$scope.$apply(() => {
-						$scope.close();
-					});
-				}
+				target = target.parentElement;
 			}
-		});
+
+			if (!parentFound) {
+				$scope.$apply(() => {
+					$scope.close();
+				});
+			}
+		}
+	}
+
+	if (settings.closeOnBlur) {
+		$document.on('click', closeOnBlurFn);
 	}
 
 	$scope.$on('$destroy', () => {
-		$document.off('click');
+		$document.off('click', closeOnBlurFn);
 	});
 
 	angular.extend($scope, {
