@@ -30,8 +30,9 @@
       </a>
     </div>
   <ul class="dropdown-menu dropdown-menu-form"
+      ng-if="open"
       ng-show="open"
-      style="margin-top: 0"
+      style="width: calc(100% - 2rem); margin-top: 0"
       ng-style="{display: open ? 'block' : 'none', height : settings.scrollable ? settings.scrollableHeight : 'auto', overflow: 'auto' }">
     <!-- Selected Item -->
     <li ng-if="!isEditMode() && selectedItem.length > 0 && customFilteredItem.length <= 0"
@@ -71,8 +72,16 @@
         role="presentation"
         ng-repeat="option in customFilteredItem | orderBy:'toString()'">
       <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
-        <span style="display: inline-block; width: 100%"
-              ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
+        <div class="text-container">
+          <span class="text-start"
+                ng-if="option.name.length >= 5"
+                style="max-width: calc(100% - 5ch)"><!--
+              --><span ng-style="{'max-width': (option.name.length - 5) + 'ch'}"
+                       ng-bind-html="settings.customHTML(option, input.searchFilter)"></span><!--
+          --></span><!--
+          --><span class="text-end"
+                ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
+        </div>
       </div>
     </li>
     <!-- Not-Selected Item -->
@@ -93,8 +102,17 @@
          style="cursor: pointer"
          ng-click="option.disabled || setSelectedItem(option, false, true); $event.stopPropagation()"
          ng-disabled="option.disabled">
-        <span style="display: inline-block; width: 100%"
-              ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
+
+        <div class="text-container">
+          <span class="text-start"
+                ng-if="option.name.length >= 5"
+                style="max-width: calc(100% - 5ch)"><!--
+              --><span ng-style="{'max-width': (option.name.length - 5) + 'ch'}"
+                       ng-bind-html="settings.customHTML(option, input.searchFilter)"></span><!--
+          --></span><!--
+          --><span class="text-end"
+                ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
+        </div>
       </a>
     </li>
     <!-- Default -->
@@ -106,23 +124,12 @@
          role="menuitem"
          class="option"
          tabindex="-1"
+         style="width: 100%; text-overflow: ellipsis; overflow: hidden"
          ng-click="option.disabled || setSelectedItem(option, false, true)"
          ng-disabled="option.disabled">
-        <div ng-if="settings.checkBoxes"
-             class="checkbox">
-          <label>
-            <input class="checkboxInput"
-                   type="checkbox"
-                   ng-click="checkboxClick($event, option)"
-                   ng-checked="isChecked(option)" />
-            <span dm-dropdown-static-include="{{settings.template}}"></span>
-          </label>
-        </div>
-        <span ng-if="!settings.checkBoxes"
-              data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
+        <span data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
         </span>
-        <span ng-if="!settings.checkBoxes"
-              dm-dropdown-static-include="{{settings.template}}"></span>
+        <span dm-dropdown-static-include="{{settings.template}}"></span>
       </a>
     </li>
     <!-- Result Not Found -->
