@@ -119,7 +119,7 @@
     <li ng-if="!settings.groupBy && !settings.seperateSelectedItem"
         ng-class="{'active': isChecked(option) && settings.styleActive}"
         role="presentation"
-        ng-repeat="option in options | filter:getFilter(input.searchFilter) | orderBy:'':false:orderFunction">
+        ng-repeat="option in options | filter:getFilter(input.searchFilter) | orderBy:'toString()'">
       <a ng-keydown="option.disabled || keyDownLink($event)"
          role="menuitem"
          class="option"
