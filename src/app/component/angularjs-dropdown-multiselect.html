@@ -45,16 +45,16 @@
         ng-class="{active: isChecked(option) && settings.styleActive}"
         role="presentation"
         ng-repeat="option in selectedItem">
-      <div class="option" tabindex="-1" style="display:block;padding:3px 20px;clear:both;font-weight:normal;line-height:1.42857143;color:#333;white-space:nowrap;">
+      <div class="option" tabindex="-1">
         <a role="menuitem"
-           ng-click="enterEditMode(option)"
-           style="display: inline-block; width: calc(100% - 20px); cursor: pointer">
+           class="selected"
+           ng-click="enterEditMode(option)">
           <span style="display: block; width: 100%"
                 dm-dropdown-static-include="{{settings.template}}"></span>
         </a>
         <a ng-keydown="option.disabled || keyDownLink($event)"
            role="menuitem"
-           style="display: inline-block; float: right; cursor: pointer"
+           class="deselect"
            ng-click="option.disabled || setSelectedItem(option, false, true); $event.stopPropagation()"
            ng-disabled="option.disabled">
           <span data-ng-class="{'glyphicon glyphicon-remove': isChecked(option)}"></span>
