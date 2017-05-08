@@ -48,6 +48,7 @@ export default function dropdownMultiselectController(
 	'ngInject';
 
 	$scope.mode = Mode.normal;
+	$scope.documentClick = false;
 
 	const $dropdownTrigger = $element.children()[0];
 	const externalEvents = {
@@ -126,6 +127,9 @@ export default function dropdownMultiselectController(
 	angular.extend(texts, $scope.translationTexts);
 
 	function closeOnBlurFn(e) {
+		if (e.type === 'click') $scope.documentClick = true;
+		if (!$scope.documentClick) return;
+		$scope.documentClick = false;
 		$scope.mode = Mode.normal;
 		if ($scope.open) {
 			let target = e.target.parentElement;
@@ -148,13 +152,25 @@ export default function dropdownMultiselectController(
 		}
 	}
 
-	if (settings.closeOnBlur) {
-		$document.on('click', closeOnBlurFn);
+	function setDocumentClick() {
+		$scope.documentClick = true;
 	}
 
-	$scope.$on('$destroy', () => {
-		$document.off('click', closeOnBlurFn);
-	});
+	function unsetDocumentClick() {
+		$scope.documentClick = false;
+	}
+
+	if (settings.closeOnBlur) {
+		$document.on('click, touchend', closeOnBlurFn);
+		$document.on('touchstart', setDocumentClick);
+		$document.on('touchmove', unsetDocumentClick);
+
+		$scope.$on('$destroy', () => {
+			$document.off('click, touchend', closeOnBlurFn);
+			$document.off('touchstart', setDocumentClick);
+			$document.off('touchmove', unsetDocumentClick);
+		});
+	}
 
 	angular.extend($scope, {
 		toggleDropdown,
