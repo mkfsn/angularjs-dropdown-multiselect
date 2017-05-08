@@ -161,12 +161,14 @@ export default function dropdownMultiselectController(
 	}
 
 	if (settings.closeOnBlur) {
-		$document.on('click, touchend', closeOnBlurFn);
+		$document.on('click', closeOnBlurFn);
+		$document.on('touchend', closeOnBlurFn);
 		$document.on('touchstart', setDocumentClick);
 		$document.on('touchmove', unsetDocumentClick);
 
 		$scope.$on('$destroy', () => {
-			$document.off('click, touchend', closeOnBlurFn);
+			$document.off('click', closeOnBlurFn);
+			$document.off('touchend', closeOnBlurFn);
 			$document.off('touchstart', setDocumentClick);
 			$document.off('touchmove', unsetDocumentClick);
 		});
@@ -546,9 +548,6 @@ export default function dropdownMultiselectController(
 	}
 
 	function finishEdit() {
-		if ($scope.mode !== Mode.edit) {
-			return;
-		}
 		$scope.externalEvents.onOptionUpdate($scope.editModel, $scope.input.searchFilter);
 		$scope.mode = Mode.normal;
 		$scope.editModel = undefined;
