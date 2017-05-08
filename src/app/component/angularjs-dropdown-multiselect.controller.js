@@ -269,6 +269,7 @@ export default function dropdownMultiselectController(
 
 	function close() {
 		$scope.open = false;
+		$scope.editModel = undefined;
 		$scope.input.searchFilter = $scope.settings.clearSearchOnClose ? '' : $scope.input.searchFilter;
 		$scope.customFilteredItem = [];
 		$scope.externalEvents.onClose();
