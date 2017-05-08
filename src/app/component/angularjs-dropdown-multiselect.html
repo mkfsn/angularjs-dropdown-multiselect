@@ -129,7 +129,7 @@
          ng-disabled="option.disabled">
         <span data-ng-class="{'glyphicon glyphicon-ok': isChecked(option)}">
         </span>
-        <span dm-dropdown-static-include="{{settings.template}}"></span>
+        <span ng-bind-html="settings.customHTML(option, input.searchFilter)"></span>
       </a>
     </li>
     <!-- Result Not Found -->
